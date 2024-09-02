@@ -1,23 +1,27 @@
-package edu.sdccd.cisc191.project;
+package edu.sdccd.cisc191.library;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 public class Loan {
+    private static final int LOAN_PERIOD_DAYS = 14;
+
     private final String loanId;
     private Book book;
     private User user;
-    private LocalDate loanDate;
-    private LocalDate dueDate;
+    private final LocalDate loanDate;
+    private final LocalDate dueDate;
     private LocalDate returnDate;
 
-    public Loan(Book book, User user, LocalDate loanDate, LocalDate dueDate) {
+    public Loan(Book book, User user) {
         this.loanId = UUID.randomUUID().toString();
         this.book = book;
         this.user = user;
-        this.loanDate = loanDate;
-        this.dueDate = dueDate;
+        this.loanDate = LocalDate.now();
+        this.dueDate = loanDate.plusDays(LOAN_PERIOD_DAYS);
         this.returnDate = null;
+
+        user.borrowBook(this);
     }
 
     public String getLoanId() {
@@ -44,16 +48,8 @@ public class Loan {
         return loanDate;
     }
 
-    public void setLoanDate(LocalDate loanDate) {
-        this.loanDate = loanDate;
-    }
-
     public LocalDate getDueDate() {
         return dueDate;
-    }
-
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
     }
 
     public LocalDate getReturnDate() {

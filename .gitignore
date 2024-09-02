@@ -3,6 +3,7 @@
 target
 dependency-reduced-pom.xml
 DatabaseLab.h2.mv.db
+data/
 
 # Compiled class file
 *.class

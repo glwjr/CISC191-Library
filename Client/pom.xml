@@ -4,15 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>edu.sdccd.cisc191.project</groupId>
-        <artifactId>ProjectOne</artifactId>
+        <groupId>edu.sdccd.cisc191.library</groupId>
+        <artifactId>Library</artifactId>
         <version>1.0.0</version>
     </parent>
     <artifactId>Client</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>edu.sdccd.cisc191.project</groupId>
+            <groupId>edu.sdccd.cisc191.library</groupId>
             <artifactId>Common</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -58,7 +58,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>edu.sdccd.cisc191.project.Client</mainClass>
+                                    <mainClass>edu.sdccd.cisc191.library.Client</mainClass>
                                 </transformer>
                             </transformers>
                             <filters>

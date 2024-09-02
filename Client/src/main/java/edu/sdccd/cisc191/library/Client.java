@@ -1,7 +1,4 @@
-package edu.sdccd.cisc191.project;
-
-import java.net.*;
-import java.io.*;
+package edu.sdccd.cisc191.library;
 
 /**
  * Program description will go here
