@@ -7,10 +7,10 @@ public class Loan {
     private static final int LOAN_PERIOD_DAYS = 14;
 
     private final String loanId;
-    private Book book;
-    private User user;
+    private final Book book;
+    private final User user;
     private final LocalDate loanDate;
-    private final LocalDate dueDate;
+    private LocalDate dueDate;
     private LocalDate returnDate;
 
     public Loan(Book book, User user) {
@@ -32,16 +32,8 @@ public class Loan {
         return book;
     }
 
-    public void setBook(Book book) {
-        this.book = book;
-    }
-
     public User getUser() {
         return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public LocalDate getLoanDate() {
@@ -50,6 +42,10 @@ public class Loan {
 
     public LocalDate getDueDate() {
         return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
     }
 
     public LocalDate getReturnDate() {
@@ -62,5 +58,11 @@ public class Loan {
 
     public boolean isOverdue() {
         return returnDate == null && LocalDate.now().isAfter(dueDate);
+    }
+
+    public void returnBook() {
+        setReturnDate(LocalDate.now());
+        user.returnBook(this);
+        book.setOnLoan(false);
     }
 }

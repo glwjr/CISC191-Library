@@ -4,6 +4,7 @@ target
 dependency-reduced-pom.xml
 DatabaseLab.h2.mv.db
 data/
+.DS_Store
 
 # Compiled class file
 *.class
