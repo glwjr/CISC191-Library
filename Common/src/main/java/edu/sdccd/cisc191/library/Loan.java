@@ -8,20 +8,20 @@ public class Loan {
 
     private final String loanId;
     private final Book book;
-    private final User user;
+    private final String userId;
     private final LocalDate loanDate;
     private LocalDate dueDate;
     private LocalDate returnDate;
 
-    public Loan(Book book, User user) {
+    public Loan(Book book, String userId) {
         this.loanId = UUID.randomUUID().toString();
         this.book = book;
-        this.user = user;
+        this.userId = userId;
         this.loanDate = LocalDate.now();
         this.dueDate = loanDate.plusDays(LOAN_PERIOD_DAYS);
         this.returnDate = null;
 
-        user.borrowBook(this);
+        book.setOnLoan(true);
     }
 
     public String getLoanId() {
@@ -32,8 +32,8 @@ public class Loan {
         return book;
     }
 
-    public User getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
     public LocalDate getLoanDate() {
@@ -62,7 +62,6 @@ public class Loan {
 
     public void returnBook() {
         setReturnDate(LocalDate.now());
-        user.returnBook(this);
         book.setOnLoan(false);
     }
 }

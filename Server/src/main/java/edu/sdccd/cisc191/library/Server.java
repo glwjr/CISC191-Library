@@ -1,5 +1,7 @@
 package edu.sdccd.cisc191.library;
 
+import edu.sdccd.cisc191.library.utils.DataManager;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -8,15 +10,15 @@ import java.util.List;
  */
 
 public class Server {
-    private static ServerDataManager serverDataManager;
-
     public static void main(String[] args) {
-        serverDataManager = new ServerDataManager();
+        int maxLoansPerUser = 5;
+        String dataDirectory = "Server/data";
+        DataManager dataManager = new DataManager(maxLoansPerUser, dataDirectory);
 
         try {
-            List<User> users = serverDataManager.loadAllUsers();
-            List<Book> books = serverDataManager.loadAllBooks();
-            List<Loan> loans = serverDataManager.loadAllLoans();
+            List<User> users = dataManager.loadAllUsers();
+            List<Book> books = dataManager.loadAllBooks();
+            List<Loan> loans = dataManager.loadAllLoans();
 
             System.out.println("Server initialized. Loaded: ");
             System.out.println(users.size() + " users");

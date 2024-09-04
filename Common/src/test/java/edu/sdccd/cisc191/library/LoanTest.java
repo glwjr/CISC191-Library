@@ -16,14 +16,14 @@ public class LoanTest {
     void setUp() {
         user = new User("Test User", UserRole.MEMBER);
         book = new Book("Test Book", "Test Author");
-        loan = new Loan(book, user);
+        loan = new Loan(book, user.getUserId());
     }
 
     @Test
     void testLoanCreation() {
         assertNotNull(loan.getLoanId(), "Loan ID should not be null");
         assertEquals(book, loan.getBook(), "Book should be the same");
-        assertEquals(user, loan.getUser(), "User should be the same");
+        assertEquals(user.getUserId(), loan.getUserId(), "User should be the same");
         assertEquals(LocalDate.now(), loan.getLoanDate(), "Loan Date should be the same");
         assertEquals(LocalDate.now().plusDays(14), loan.getDueDate(), "Due Date should be the same");
         assertNull(loan.getReturnDate(), "Return Date should initially be null");
@@ -46,6 +46,5 @@ public class LoanTest {
         loan.returnBook();
         assertNotNull(loan.getReturnDate(), "Return Date should not be null after returning");
         assertEquals(LocalDate.now(), loan.getReturnDate(), "Return Date should be the same");
-        assertTrue(user.getBorrowedBooks().isEmpty(), "User's borrowed books should be empty after returning");
     }
 }

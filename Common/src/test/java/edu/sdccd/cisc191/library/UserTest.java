@@ -36,16 +36,12 @@ public class UserTest {
     @Test
     void testLoanLifecycle() {
         Book book = new Book("Test Book", "Test Author");
-        Loan loan = new Loan(book, user);
+        Loan loan = new Loan(book, user.getUserId());
 
         assertEquals(book, loan.getBook(), "Book in loan should match the original book");
-        assertEquals(user, loan.getUser(), "User in loan should match the original user");
-
-        assertEquals(1, user.getBorrowedBooks().size(), "User should have one borrowed book");
-        assertEquals(loan, user.getBorrowedBooks().get(0), "The borrowed book should be in the user's list");
+        assertEquals(user.getUserId(), loan.getUserId(), "User in loan should match the original user");
 
         loan.returnBook();
-        assertEquals(0, user.getBorrowedBooks().size(), "User should have no borrowed books");
         assertNotNull(loan.getReturnDate(), "Loan should have a returned date");
     }
 }
