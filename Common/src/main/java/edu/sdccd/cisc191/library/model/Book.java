@@ -1,4 +1,4 @@
-package edu.sdccd.cisc191.library;
+package edu.sdccd.cisc191.library.model;
 
 public class Book extends LibraryItem {
     private String author;

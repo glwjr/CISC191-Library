@@ -1,5 +1,9 @@
 package edu.sdccd.cisc191.library;
 
+import edu.sdccd.cisc191.library.model.Book;
+import edu.sdccd.cisc191.library.model.Loan;
+import edu.sdccd.cisc191.library.model.User;
+import edu.sdccd.cisc191.library.model.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -1,7 +1,5 @@
-package edu.sdccd.cisc191.library;
+package edu.sdccd.cisc191.library.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class User {

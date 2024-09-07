@@ -1,4 +1,4 @@
-package edu.sdccd.cisc191.library;
+package edu.sdccd.cisc191.library.model;
 
 import java.time.LocalDate;
 import java.util.UUID;

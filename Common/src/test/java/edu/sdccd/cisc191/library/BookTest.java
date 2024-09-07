@@ -1,5 +1,6 @@
 package edu.sdccd.cisc191.library;
 
+import edu.sdccd.cisc191.library.model.Book;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
