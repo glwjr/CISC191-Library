@@ -8,7 +8,7 @@ import java.util.List;
 public interface UserRepository {
     List<User> getAllUsers();
     User getUserById(String userId);
-    void addUser(User user) throws IOException;
-    void updateUser(User user) throws IOException;
+    User addUser(User user) throws IOException;
+    User updateUser(User user) throws IOException;
     void deleteUser(String userId) throws IOException;
 }

@@ -56,17 +56,18 @@ public class FileUserRepository implements UserRepository {
     }
 
     @Override
-    public void addUser(User user) throws IOException {
+    public User addUser(User user) throws IOException {
         List<User> users = getAllUsers();
         if (users.stream().anyMatch(u -> u.getUserId().equals(user.getUserId()))) {
             throw new IllegalArgumentException("User with ID " + user.getUserId() + " already exists");
         }
         users.add(user);
         saveAllUsers(users);
+        return user;
     }
 
     @Override
-    public void updateUser(User updatedUser) throws IOException {
+    public User updateUser(User updatedUser) throws IOException {
         List<User> users = getAllUsers();
         boolean userFound = false;
         for (int i = 0; i < users.size(); i++) {
@@ -82,6 +83,7 @@ public class FileUserRepository implements UserRepository {
         }
 
         saveAllUsers(users);
+        return updatedUser;
     }
 
     @Override

@@ -13,20 +13,20 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
-    public List<Book> getAllBooks() throws IOException {
+    public List<Book> getAllBooks() {
         return bookRepository.getAllBooks();
     }
 
-    public Book getBookById(String itemId) throws IOException {
+    public Book getBookById(String itemId) {
         return bookRepository.getBookById(itemId);
     }
 
-    public void addBook(Book book) throws IOException {
-        bookRepository.addBook(book);
+    public Book addBook(Book book) throws IOException {
+        return bookRepository.addBook(book);
     }
 
-    public void updateBook(Book book) throws IOException {
-        bookRepository.updateBook(book);
+    public Book updateBook(Book book) throws IOException {
+        return bookRepository.updateBook(book);
     }
 
     public void deleteBook(String itemId) throws IOException {

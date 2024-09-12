@@ -21,12 +21,12 @@ public class UserService {
         return userRepository.getUserById(userId);
     }
 
-    public void addUser(User user) throws IOException {
-        userRepository.addUser(user);
+    public User addUser(User user) throws IOException {
+        return userRepository.addUser(user);
     }
 
-    public void updateUser(User user) throws IOException {
-        userRepository.updateUser(user);
+    public User updateUser(User user) throws IOException {
+        return userRepository.updateUser(user);
     }
 
     public void deleteUser(String userId) throws IOException {

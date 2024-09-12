@@ -1,6 +1,9 @@
 package edu.sdccd.cisc191.library.service;
 
-import edu.sdccd.cisc191.library.exceptions.*;
+import edu.sdccd.cisc191.library.exceptions.ItemAlreadyOnLoanException;
+import edu.sdccd.cisc191.library.exceptions.ItemNotFoundException;
+import edu.sdccd.cisc191.library.exceptions.LoanLimitExceededException;
+import edu.sdccd.cisc191.library.exceptions.UserNotFoundException;
 import edu.sdccd.cisc191.library.model.Book;
 import edu.sdccd.cisc191.library.model.Loan;
 import edu.sdccd.cisc191.library.model.User;
@@ -41,7 +44,7 @@ public class LoanService {
         return loanRepository.getOverdueLoansByUserId(userId);
     }
 
-    public void addLoan(String userId, String itemId) throws LoanLimitExceededException, ItemAlreadyOnLoanException,
+    public Loan addLoan(String userId, String itemId) throws LoanLimitExceededException, ItemAlreadyOnLoanException,
             IOException {
         User user = userRepository.getUserById(userId);
         Book book = bookRepository.getBookById(itemId);
@@ -65,12 +68,12 @@ public class LoanService {
 
         Loan newLoan = new Loan(book, userId);
 
-        loanRepository.addLoan(newLoan);
         bookRepository.updateBook(book);
+        return loanRepository.addLoan(newLoan);
     }
 
-    public void updateLoan(Loan loan) throws IOException {
-        loanRepository.updateLoan(loan);
+    public Loan updateLoan(Loan loan) throws IOException {
+        return loanRepository.updateLoan(loan);
     }
 
     public void deleteLoan(String loanId) throws IOException {

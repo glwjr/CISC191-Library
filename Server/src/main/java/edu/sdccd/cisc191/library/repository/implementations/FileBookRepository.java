@@ -57,17 +57,18 @@ public class FileBookRepository implements BookRepository {
     }
 
     @Override
-    public void addBook(Book book) throws IOException {
+    public Book addBook(Book book) throws IOException {
         List<Book> books = getAllBooks();
         if (books.stream().anyMatch(b -> b.getItemId().equals(book.getItemId()))) {
             throw new ItemAlreadyExistsException("Book with ID " + book.getItemId() + " already exists");
         }
         books.add(book);
         saveAllBooks(books);
+        return book;
     }
 
     @Override
-    public void updateBook(Book updatedBook) throws IOException {
+    public Book updateBook(Book updatedBook) throws IOException {
         List<Book> books = getAllBooks();
         boolean bookFound = false;
         for (int i = 0; i < books.size(); i++) {
@@ -83,6 +84,7 @@ public class FileBookRepository implements BookRepository {
         }
 
         saveAllBooks(books);
+        return updatedBook;
     }
 
     @Override

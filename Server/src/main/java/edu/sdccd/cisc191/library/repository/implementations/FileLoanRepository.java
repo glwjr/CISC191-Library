@@ -77,17 +77,18 @@ public class FileLoanRepository implements LoanRepository {
     }
 
     @Override
-    public void addLoan(Loan loan) throws IOException {
+    public Loan addLoan(Loan loan) throws IOException {
         List<Loan> loans = getAllLoans();
         if (loans.stream().anyMatch(l -> l.getLoanId().equals(loan.getLoanId()))) {
             throw new LoanAlreadyExistsException("Loan with ID " + loan.getLoanId() + " already exists");
         }
         loans.add(loan);
         saveAllLoans(loans);
+        return loan;
     }
 
     @Override
-    public void updateLoan(Loan updatedLoan) throws IOException {
+    public Loan updateLoan(Loan updatedLoan) throws IOException {
         List<Loan> loans = getAllLoans();
         boolean loanFound = false;
         for (int i = 0; i < loans.size(); i++) {
@@ -103,6 +104,7 @@ public class FileLoanRepository implements LoanRepository {
         }
 
         saveAllLoans(loans);
+        return updatedLoan;
     }
 
     @Override

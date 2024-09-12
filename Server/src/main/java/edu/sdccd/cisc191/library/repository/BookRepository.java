@@ -8,7 +8,7 @@ import java.util.List;
 public interface BookRepository {
     List<Book> getAllBooks();
     Book getBookById(String itemId);
-    void addBook(Book book) throws IOException;
-    void updateBook(Book book) throws IOException;
+    Book addBook(Book book) throws IOException;
+    Book updateBook(Book book) throws IOException;
     void deleteBook(String itemId) throws IOException;
 }

@@ -10,7 +10,7 @@ public interface LoanRepository {
     Loan getLoanById(String loanId);
     List<Loan> getLoansByUserId(String userId);
     List<Loan> getOverdueLoansByUserId(String userId);
-    void addLoan(Loan loan) throws IOException;
-    void updateLoan(Loan loan) throws IOException;
+    Loan addLoan(Loan loan) throws IOException;
+    Loan updateLoan(Loan loan) throws IOException;
     void deleteLoan(String loanId) throws IOException;
 }
