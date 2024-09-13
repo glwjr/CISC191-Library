@@ -85,6 +85,7 @@ public class FileUserRepository implements UserRepository {
         if (users.remove(userId) == null) {
             throw new UserNotFoundException("User with ID " + userId + " not found");
         }
+        users.remove(userId);
         saveAllUsers(users);
     }
 

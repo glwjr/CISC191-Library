@@ -86,6 +86,7 @@ public class FileBookRepository implements BookRepository {
         if (books.remove(itemId) == null) {
             throw new ItemNotFoundException("Book with ID " + itemId + " not found");
         }
+        books.remove(itemId);
         saveAllBooks(books);
     }
 

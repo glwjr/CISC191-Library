@@ -116,6 +116,7 @@ public class FileLoanRepository implements LoanRepository {
         if (loans.remove(loanId) == null) {
             throw new LoanNotFoundException("Loan with ID " + loanId + " not found");
         }
+        loans.remove(loanId);
         saveAllLoans(loans);
     }
 

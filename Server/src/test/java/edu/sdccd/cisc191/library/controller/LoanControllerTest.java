@@ -29,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LoanControllerTest {
     private LoanController loanController;
-    private UserController userController;
     private BookController bookController;
     private LoanService loanService;
     private User user1;
@@ -52,7 +51,7 @@ public class LoanControllerTest {
         BookService bookService = new BookService(bookRepository);
 
         loanController = new LoanController(loanService);
-        userController = new UserController(userService);
+        UserController userController = new UserController(userService);
         bookController = new BookController(bookService);
 
         user1 = new User("User1", UserRole.MEMBER);
