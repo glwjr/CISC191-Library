@@ -13,6 +13,7 @@ import edu.sdccd.cisc191.library.repository.UserRepository;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class LoanService {
     private final int maxLoansPerUser;
@@ -28,7 +29,7 @@ public class LoanService {
         this.bookRepository = bookRepository;
     }
 
-    public List<Loan> getAllLoans() {
+    public Map<String, Loan> getAllLoans() {
         return loanRepository.getAllLoans();
     }
 

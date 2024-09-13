@@ -4,7 +4,7 @@ import edu.sdccd.cisc191.library.model.User;
 import edu.sdccd.cisc191.library.repository.UserRepository;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 public class UserService {
     private final UserRepository userRepository;
@@ -13,7 +13,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers() {
+    public Map<String, User> getAllUsers() {
         return userRepository.getAllUsers();
     }
 

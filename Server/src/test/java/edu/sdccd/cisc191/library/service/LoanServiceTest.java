@@ -88,11 +88,11 @@ public class LoanServiceTest {
         bookRepository.addBook(book1);
         bookRepository.addBook(book2);
 
-        loanService.addLoan(user.getUserId(), book1.getItemId());
+        Loan loan1 = loanService.addLoan(user.getUserId(), book1.getItemId());
         loanService.addLoan(user.getUserId(), book2.getItemId());
 
         assertEquals(2, loanService.getLoansByUserId(user.getUserId()).size());
-        assertEquals(book1.getTitle(), loanService.getLoansByUserId(user.getUserId()).get(0).getBook().getTitle());
+        assertEquals(book1.getTitle(), loanService.getLoanById(loan1.getLoanId()).getBook().getTitle());
     }
 
     @Test

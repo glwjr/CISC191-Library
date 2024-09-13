@@ -1,12 +1,10 @@
 package edu.sdccd.cisc191.library.controller;
 
-import edu.sdccd.cisc191.library.dto.BookDTO;
 import edu.sdccd.cisc191.library.model.Book;
 import edu.sdccd.cisc191.library.service.BookService;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class BookController {
     private final BookService bookService;
@@ -15,34 +13,20 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    private BookDTO convertToDTO(Book book) {
-        return new BookDTO(book.getTitle(), book.getAuthor());
+    public Map<String, Book> getAllBooks() {
+        return bookService.getAllBooks();
     }
 
-    private Book convertToBook(BookDTO bookDTO) {
-        return new Book(bookDTO.getTitle(), bookDTO.getAuthor());
+    public Book getBookById(String bookId) {
+        return bookService.getBookById(bookId);
     }
 
-    public List<BookDTO> getAllBooks() {
-        List<Book> books = bookService.getAllBooks();
-        return books.stream().map(this::convertToDTO).collect(Collectors.toList());
+    public Book addBook(Book book) throws IOException {
+        return bookService.addBook(book);
     }
 
-    public BookDTO getBookById(String bookId) {
-        Book book = bookService.getBookById(bookId);
-        return convertToDTO(book);
-    }
-
-    public BookDTO addBook(BookDTO newBookDTO) throws IOException {
-        Book newBook = convertToBook(newBookDTO);
-        Book addedBook = bookService.addBook(newBook);
-        return convertToDTO(addedBook);
-    }
-
-    public BookDTO updateBook(BookDTO updatedBookDTO) throws IOException {
-        Book updatedBook = convertToBook(updatedBookDTO);
-        Book savedBook = bookService.updateBook(updatedBook);
-        return convertToDTO(savedBook);
+    public Book updateBook(Book book) throws IOException {
+        return bookService.updateBook(book);
     }
 
     public void deleteBook(String bookId) throws IOException {

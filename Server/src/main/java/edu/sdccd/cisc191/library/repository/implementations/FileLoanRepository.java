@@ -18,8 +18,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class FileLoanRepository implements LoanRepository {
     private final Path filePath;
@@ -35,7 +36,7 @@ public class FileLoanRepository implements LoanRepository {
         try {
             if (!Files.exists(filePath)) {
                 Files.createFile(filePath);
-                saveAllLoans(new ArrayList<>());
+                saveAllLoans(new HashMap<>());
             }
         } catch (IOException e) {
             throw new LoanFileException("Failed to initialize file: " + filePath, e);
@@ -43,11 +44,11 @@ public class FileLoanRepository implements LoanRepository {
     }
 
     @Override
-    public List<Loan> getAllLoans() {
+    public Map<String, Loan> getAllLoans() {
         try (FileReader reader = new FileReader(filePath.toFile())) {
-            Type loanListType = new TypeToken<ArrayList<Loan>>() {}.getType();
-            List<Loan> loans = gson.fromJson(reader, loanListType);
-            return (loans != null ? loans : new ArrayList<>());
+            Type loanMapType = new TypeToken<HashMap<String, Loan>>() {}.getType();
+            HashMap<String, Loan> loans = gson.fromJson(reader, loanMapType);
+            return (loans != null ? loans : new HashMap<>());
         } catch (IOException e) {
             throw new LoanFileException("Failed to initialize file: " + filePath, e);
         }
@@ -55,71 +56,70 @@ public class FileLoanRepository implements LoanRepository {
 
     @Override
     public Loan getLoanById(String loanId) {
-        return getAllLoans().stream()
-                .filter(loan -> loan.getLoanId().equals(loanId))
-                .findFirst()
-                .orElseThrow(() -> new LoanNotFoundException("Loan with ID " + loanId + " not found"));
+        Map<String, Loan> loans = getAllLoans();
+        Loan loan = loans.get(loanId);
+        if (loan == null) {
+            throw new LoanNotFoundException("Loan with ID " + loanId + " not found");
+        }
+        return loan;
     }
 
     @Override
     public List<Loan> getLoansByUserId(String userId) {
-        return getAllLoans().stream()
-                .filter(loan -> loan.getUserId().equals(userId))
-                .collect(Collectors.toList());
+        Map<String, Loan> allLoans = getAllLoans();
+        List<Loan> userLoans = new ArrayList<>();
+        for (Loan loan:allLoans.values()) {
+            if (loan.getUserId().equals(userId)) {
+                userLoans.add(loan);
+            }
+        }
+        return userLoans;
     }
 
     @Override
     public List<Loan> getOverdueLoansByUserId(String userId) {
-        return getAllLoans().stream()
-                .filter(loan -> loan.getUserId().equals(userId))
-                .filter(Loan::isOverdue)
-                .collect(Collectors.toList());
+        Map<String, Loan> allLoans = getAllLoans();
+        List<Loan> overdueUserLoans = new ArrayList<>();
+        for (Loan loan:allLoans.values()) {
+            if (loan.getUserId().equals(userId) && loan.isOverdue()) {
+                overdueUserLoans.add(loan);
+            }
+        }
+        return overdueUserLoans;
     }
 
     @Override
     public Loan addLoan(Loan loan) throws IOException {
-        List<Loan> loans = getAllLoans();
-        if (loans.stream().anyMatch(l -> l.getLoanId().equals(loan.getLoanId()))) {
+        Map<String, Loan> loans = getAllLoans();
+        if (loans.containsKey(loan.getLoanId())) {
             throw new LoanAlreadyExistsException("Loan with ID " + loan.getLoanId() + " already exists");
         }
-        loans.add(loan);
+        loans.put(loan.getLoanId(), loan);
         saveAllLoans(loans);
         return loan;
     }
 
     @Override
     public Loan updateLoan(Loan updatedLoan) throws IOException {
-        List<Loan> loans = getAllLoans();
-        boolean loanFound = false;
-        for (int i = 0; i < loans.size(); i++) {
-            if (loans.get(i).getLoanId().equals(updatedLoan.getLoanId())) {
-                loans.set(i, updatedLoan);
-                loanFound = true;
-                break;
-            }
-        }
-
-        if (!loanFound) {
+        Map<String, Loan> loans = getAllLoans();
+        if (!loans.containsKey(updatedLoan.getLoanId())) {
             throw new LoanNotFoundException("Loan with ID " + updatedLoan.getLoanId() + " not found");
         }
-
+        loans.put(updatedLoan.getLoanId(), updatedLoan);
         saveAllLoans(loans);
         return updatedLoan;
     }
 
     @Override
     public void deleteLoan(String loanId) throws IOException {
-        List<Loan> loans = getAllLoans();
-        boolean loanRemoved = loans.removeIf(loan -> loan.getLoanId().equals(loanId));
-
-        if (!loanRemoved) {
+        Map<String, Loan> loans = getAllLoans();
+        if (loans.remove(loanId) == null) {
             throw new LoanNotFoundException("Loan with ID " + loanId + " not found");
         }
-
         saveAllLoans(loans);
     }
 
-    private void saveAllLoans(List<Loan> loans) throws IOException {
+    private void saveAllLoans(Map<String, Loan> loans) throws IOException {
         try (FileWriter writer = new FileWriter(filePath.toFile())) {
             gson.toJson(loans, writer);
         } catch (IOException e) {

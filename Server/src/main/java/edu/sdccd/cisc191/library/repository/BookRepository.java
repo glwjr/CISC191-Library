@@ -3,10 +3,10 @@ package edu.sdccd.cisc191.library.repository;
 import edu.sdccd.cisc191.library.model.Book;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 public interface BookRepository {
-    List<Book> getAllBooks();
+    Map<String, Book> getAllBooks();
     Book getBookById(String itemId);
     Book addBook(Book book) throws IOException;
     Book updateBook(Book book) throws IOException;

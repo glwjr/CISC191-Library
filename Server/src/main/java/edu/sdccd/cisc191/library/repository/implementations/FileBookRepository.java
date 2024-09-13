@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileBookRepository implements BookRepository {
     private final Path filePath;
@@ -30,7 +30,7 @@ public class FileBookRepository implements BookRepository {
         try {
             if (!Files.exists(filePath)) {
                 Files.createFile(filePath);
-                saveAllBooks(new ArrayList<>());
+                saveAllBooks(new HashMap<>());
             }
         } catch (IOException e) {
             throw new ItemFileException("Failed to initialize file: " + filePath, e);
@@ -38,11 +38,11 @@ public class FileBookRepository implements BookRepository {
     }
 
     @Override
-    public List<Book> getAllBooks() {
+    public Map<String, Book> getAllBooks() {
         try (FileReader reader = new FileReader(filePath.toFile())) {
-            Type bookListType = new TypeToken<ArrayList<Book>>() {}.getType();
-            List<Book> books = gson.fromJson(reader, bookListType);
-            return (books != null ? books : new ArrayList<>());
+            Type bookMapType = new TypeToken<HashMap<String, Book>>() {}.getType();
+            HashMap<String, Book> books = gson.fromJson(reader, bookMapType);
+            return (books != null ? books : new HashMap<>());
         } catch (IOException e) {
             throw new ItemFileException("Failed to initialize file: " + filePath, e);
         }
@@ -50,56 +50,46 @@ public class FileBookRepository implements BookRepository {
 
     @Override
     public Book getBookById(String itemId) {
-        return getAllBooks().stream()
-                .filter(book -> book.getItemId().equals(itemId))
-                .findFirst()
-                .orElseThrow(() -> new ItemNotFoundException("Book with ID " + itemId + " not found"));
+        Map<String, Book> books = getAllBooks();
+        Book book = books.get(itemId);
+        if (book == null) {
+            throw new ItemNotFoundException("Book with ID " + itemId + " not found");
+        }
+        return book;
     }
 
     @Override
     public Book addBook(Book book) throws IOException {
-        List<Book> books = getAllBooks();
-        if (books.stream().anyMatch(b -> b.getItemId().equals(book.getItemId()))) {
+        Map<String, Book> books = getAllBooks();
+        if (books.containsKey(book.getItemId())) {
             throw new ItemAlreadyExistsException("Book with ID " + book.getItemId() + " already exists");
         }
-        books.add(book);
+        books.put(book.getItemId(), book);
         saveAllBooks(books);
         return book;
     }
 
     @Override
     public Book updateBook(Book updatedBook) throws IOException {
-        List<Book> books = getAllBooks();
-        boolean bookFound = false;
-        for (int i = 0; i < books.size(); i++) {
-            if (books.get(i).getItemId().equals(updatedBook.getItemId())) {
-                books.set(i, updatedBook);
-                bookFound = true;
-                break;
-            }
-        }
-
-        if (!bookFound) {
+        Map<String, Book> books = getAllBooks();
+        if (!books.containsKey(updatedBook.getItemId())) {
             throw new ItemNotFoundException("Book with ID " + updatedBook.getItemId() + " not found");
         }
-
+        books.put(updatedBook.getItemId(), updatedBook);
         saveAllBooks(books);
         return updatedBook;
     }
 
     @Override
     public void deleteBook(String itemId) throws IOException {
-        List<Book> books = getAllBooks();
-        boolean bookRemoved = books.removeIf(book -> book.getItemId().equals(itemId));
-
-        if (!bookRemoved) {
+        Map<String, Book> books = getAllBooks();
+        if (books.remove(itemId) == null) {
             throw new ItemNotFoundException("Book with ID " + itemId + " not found");
         }
-
         saveAllBooks(books);
     }
 
-    private void saveAllBooks(List<Book> books) throws IOException {
+    private void saveAllBooks(Map<String, Book> books) throws IOException {
         try (FileWriter writer = new FileWriter(filePath.toFile())) {
             gson.toJson(books, writer);
         } catch (IOException e) {

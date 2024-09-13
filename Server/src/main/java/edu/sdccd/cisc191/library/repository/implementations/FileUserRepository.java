@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileUserRepository implements UserRepository {
     private final Path filePath;
@@ -29,7 +29,7 @@ public class FileUserRepository implements UserRepository {
         try {
             if (!Files.exists(filePath)) {
                 Files.createFile(filePath);
-                saveAllUsers(new ArrayList<>());
+                saveAllUsers(new HashMap<>());
             }
         } catch (IOException e) {
             throw new UserFileException("Failed to initialize file: " + filePath, e);
@@ -37,11 +37,11 @@ public class FileUserRepository implements UserRepository {
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public Map<String, User> getAllUsers() {
         try (FileReader reader = new FileReader(filePath.toFile())) {
-            Type userListType = new TypeToken<ArrayList<User>>() {}.getType();
-            List<User> users = gson.fromJson(reader, userListType);
-            return (users != null ? users : new ArrayList<>());
+            Type userMapType = new TypeToken<HashMap<String, User>>() {}.getType();
+            HashMap<String, User> users = gson.fromJson(reader, userMapType);
+            return (users != null ? users : new HashMap<>());
         } catch (IOException e) {
             throw new UserFileException("Failed to initialize file: " + filePath, e);
         }
@@ -49,56 +49,46 @@ public class FileUserRepository implements UserRepository {
 
     @Override
     public User getUserById(String userId) {
-        return getAllUsers().stream()
-                .filter(user -> user.getUserId().equals(userId))
-                .findFirst()
-                .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not found"));
+        Map<String, User> users = getAllUsers();
+        User user = users.get(userId);
+        if (user == null) {
+            throw new UserNotFoundException("User with ID " + userId + " not found");
+        }
+        return user;
     }
 
     @Override
     public User addUser(User user) throws IOException {
-        List<User> users = getAllUsers();
-        if (users.stream().anyMatch(u -> u.getUserId().equals(user.getUserId()))) {
-            throw new IllegalArgumentException("User with ID " + user.getUserId() + " already exists");
+        Map<String, User> users = getAllUsers();
+        if (users.containsKey(user.getUserId())) {
+            throw new UserNotFoundException("User with ID " + user.getUserId() + " already exists");
         }
-        users.add(user);
+        users.put(user.getUserId(), user);
         saveAllUsers(users);
         return user;
     }
 
     @Override
     public User updateUser(User updatedUser) throws IOException {
-        List<User> users = getAllUsers();
-        boolean userFound = false;
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getUserId().equals(updatedUser.getUserId())) {
-                users.set(i, updatedUser);
-                userFound = true;
-                break;
-            }
+        Map<String, User> users = getAllUsers();
+        if (!users.containsKey(updatedUser.getUserId())) {
+            throw new UserNotFoundException("User with ID " + updatedUser.getUserId() + " not found");
         }
-
-        if (!userFound) {
-            throw new IllegalArgumentException("User with ID " + updatedUser.getUserId() + " not found");
-        }
-
+        users.put(updatedUser.getUserId(), updatedUser);
         saveAllUsers(users);
         return updatedUser;
     }
 
     @Override
     public void deleteUser(String userId) throws IOException {
-        List<User> users = getAllUsers();
-        boolean userRemoved = users.removeIf(user -> user.getUserId().equals(userId));
-
-        if (!userRemoved) {
-            throw new IllegalArgumentException("User with ID " + userId + " not found");
+        Map<String, User> users = getAllUsers();
+        if (users.remove(userId) == null) {
+            throw new UserNotFoundException("User with ID " + userId + " not found");
         }
-
         saveAllUsers(users);
     }
 
-    private void saveAllUsers(List<User> users) throws IOException {
+    private void saveAllUsers(Map<String, User> users) throws IOException {
         try (FileWriter writer = new FileWriter(filePath.toFile())) {
             gson.toJson(users, writer);
         } catch (IOException e) {

@@ -49,7 +49,6 @@ public class FileLoanRepositoryTest {
 
         List<Loan> loans = loanRepository.getLoansByUserId(user.getUserId());
         assertEquals(2, loans.size());
-        assertEquals(loan1.getLoanId(), loans.get(0).getLoanId());
     }
 
     @Test

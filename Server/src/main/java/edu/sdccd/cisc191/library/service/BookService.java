@@ -4,7 +4,7 @@ import edu.sdccd.cisc191.library.model.Book;
 import edu.sdccd.cisc191.library.repository.BookRepository;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 public class BookService {
     private final BookRepository bookRepository;
@@ -13,7 +13,7 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
-    public List<Book> getAllBooks() {
+    public Map<String, Book> getAllBooks() {
         return bookRepository.getAllBooks();
     }
 

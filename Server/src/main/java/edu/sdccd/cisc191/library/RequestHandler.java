@@ -3,18 +3,19 @@ package edu.sdccd.cisc191.library;
 import edu.sdccd.cisc191.library.controller.BookController;
 import edu.sdccd.cisc191.library.controller.LoanController;
 import edu.sdccd.cisc191.library.controller.UserController;
-import edu.sdccd.cisc191.library.dto.BookDTO;
-import edu.sdccd.cisc191.library.dto.LoanDTO;
-import edu.sdccd.cisc191.library.dto.UserDTO;
 import edu.sdccd.cisc191.library.exceptions.ItemAlreadyOnLoanException;
 import edu.sdccd.cisc191.library.exceptions.LoanLimitExceededException;
 import edu.sdccd.cisc191.library.message.RequestType;
 import edu.sdccd.cisc191.library.message.RequestWrapper;
 import edu.sdccd.cisc191.library.message.ResponseStatus;
 import edu.sdccd.cisc191.library.message.ResponseWrapper;
+import edu.sdccd.cisc191.library.model.Book;
+import edu.sdccd.cisc191.library.model.Loan;
+import edu.sdccd.cisc191.library.model.User;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class RequestHandler {
     private final UserController userController;
@@ -38,9 +39,9 @@ public class RequestHandler {
                 case GET_USER:
                     return handleGetUser((String) payload);
                 case ADD_USER:
-                    return handleAddUser((UserDTO) payload);
+                    return handleAddUser((User) payload);
                 case UPDATE_USER:
-                    return handleUpdateUser((UserDTO) payload);
+                    return handleUpdateUser((User) payload);
                 case DELETE_USER:
                     return handleDeleteUser((String) payload);
                 case GET_ALL_BOOKS:
@@ -48,9 +49,9 @@ public class RequestHandler {
                 case GET_BOOK:
                     return handleGetBook((String) payload);
                 case ADD_BOOK:
-                    return handleAddBook((BookDTO) payload);
+                    return handleAddBook((Book) payload);
                 case UPDATE_BOOK:
-                    return handleUpdateBook((BookDTO) payload);
+                    return handleUpdateBook((Book) payload);
                 case DELETE_BOOK:
                     return handleDeleteBook((String) payload);
                 case GET_ALL_LOANS:
@@ -64,7 +65,7 @@ public class RequestHandler {
                 case ADD_LOAN:
                     return handleAddLoan((String[]) payload);
                 case UPDATE_LOAN:
-                    return handleUpdateLoan((LoanDTO) payload);
+                    return handleUpdateLoan((Loan) payload);
                 case DELETE_LOAN:
                     return handleDeleteLoan((String) payload);
                 default:
@@ -75,23 +76,23 @@ public class RequestHandler {
         }
     }
 
-    private ResponseWrapper<List<UserDTO>> handleGetAllUsers() {
-        List<UserDTO> users = userController.getAllUsers();
+    private ResponseWrapper<Map<String, User>> handleGetAllUsers() {
+        Map<String, User> users = userController.getAllUsers();
         return new ResponseWrapper<>(ResponseStatus.SUCCESS, users);
     }
 
-    private ResponseWrapper<UserDTO> handleGetUser(String userId) {
-        UserDTO user = userController.getUserById(userId);
+    private ResponseWrapper<User> handleGetUser(String userId) {
+        User user = userController.getUserById(userId);
         return new ResponseWrapper<>(ResponseStatus.SUCCESS, user);
     }
 
-    private ResponseWrapper<UserDTO> handleAddUser(UserDTO newUser) throws IOException {
-        UserDTO user = userController.addUser(newUser);
+    private ResponseWrapper<User> handleAddUser(User newUser) throws IOException {
+        User user = userController.addUser(newUser);
         return new ResponseWrapper<>(ResponseStatus.SUCCESS, user);
     }
 
-    private ResponseWrapper<UserDTO> handleUpdateUser(UserDTO updatedUser) throws IOException {
-        UserDTO user = userController.updateUser(updatedUser);
+    private ResponseWrapper<User> handleUpdateUser(User updatedUser) throws IOException {
+        User user = userController.updateUser(updatedUser);
         return new ResponseWrapper<>(ResponseStatus.SUCCESS, user);
     }
 
@@ -100,24 +101,24 @@ public class RequestHandler {
         return new ResponseWrapper<>(ResponseStatus.SUCCESS, "User deleted successfully");
     }
 
-    private ResponseWrapper<List<BookDTO>> handleGetAllBooks() {
-        List<BookDTO> books = bookController.getAllBooks();
+    private ResponseWrapper<Map<String, Book>> handleGetAllBooks() {
+        Map<String, Book> books = bookController.getAllBooks();
         return new ResponseWrapper<>(ResponseStatus.SUCCESS, books);
     }
 
-    private ResponseWrapper<BookDTO> handleGetBook(String itemId) {
-        BookDTO book = bookController.getBookById(itemId);
+    private ResponseWrapper<Book> handleGetBook(String itemId) {
+        Book book = bookController.getBookById(itemId);
         return new ResponseWrapper<>(ResponseStatus.SUCCESS, book);
     }
 
-    private ResponseWrapper<BookDTO> handleAddBook(BookDTO newBook) throws IOException {
-        BookDTO book = bookController.addBook(newBook);
-        return new ResponseWrapper<>(ResponseStatus.SUCCESS, book);
+    private ResponseWrapper<Book> handleAddBook(Book book) throws IOException {
+        Book newBook = bookController.addBook(book);
+        return new ResponseWrapper<>(ResponseStatus.SUCCESS, newBook);
     }
 
-    private ResponseWrapper<BookDTO> handleUpdateBook(BookDTO updatedBook) throws IOException {
-        BookDTO book = bookController.updateBook(updatedBook);
-        return new ResponseWrapper<>(ResponseStatus.SUCCESS, book);
+    private ResponseWrapper<Book> handleUpdateBook(Book book) throws IOException {
+        Book updatedBook = bookController.updateBook(book);
+        return new ResponseWrapper<>(ResponseStatus.SUCCESS, updatedBook);
     }
 
     private ResponseWrapper<String> handleDeleteBook(String itemId) throws IOException {
@@ -125,37 +126,37 @@ public class RequestHandler {
         return new ResponseWrapper<>(ResponseStatus.SUCCESS, "Book deleted successfully");
     }
 
-    private ResponseWrapper<List<LoanDTO>> handleGetAllLoans() {
-        List<LoanDTO> loans = loanController.getAllLoans();
+    private ResponseWrapper<Map<String, Loan>> handleGetAllLoans() {
+        Map<String, Loan> loans = loanController.getAllLoans();
         return new ResponseWrapper<>(ResponseStatus.SUCCESS, loans);
     }
 
-    private ResponseWrapper<LoanDTO> handleGetLoan(String loanId) {
-        LoanDTO loan = loanController.getLoanById(loanId);
+    private ResponseWrapper<Loan> handleGetLoan(String loanId) {
+        Loan loan = loanController.getLoanById(loanId);
         return new ResponseWrapper<>(ResponseStatus.SUCCESS, loan);
     }
 
-    private ResponseWrapper<List<LoanDTO>> handleGetLoansByUser(String userId) {
-        List<LoanDTO> loans = loanController.getLoansByUserId(userId);
+    private ResponseWrapper<List<Loan>> handleGetLoansByUser(String userId) {
+        List<Loan> loans = loanController.getLoansByUserId(userId);
         return new ResponseWrapper<>(ResponseStatus.SUCCESS, loans);
     }
 
-    private ResponseWrapper<List<LoanDTO>> handleGetOverdueLoansByUser(String userId) {
-        List<LoanDTO> loans = loanController.getOverdueLoansByUserId(userId);
+    private ResponseWrapper<List<Loan>> handleGetOverdueLoansByUser(String userId) {
+        List<Loan> loans = loanController.getOverdueLoansByUserId(userId);
         return new ResponseWrapper<>(ResponseStatus.SUCCESS, loans);
     }
 
-    private ResponseWrapper<LoanDTO> handleAddLoan(String[] loanData) throws LoanLimitExceededException,
+    private ResponseWrapper<Loan> handleAddLoan(String[] loanData) throws LoanLimitExceededException,
             IOException, ItemAlreadyOnLoanException {
         String userId = loanData[0];
         String itemId = loanData[1];
-        LoanDTO loan = loanController.addLoan(userId, itemId);
+        Loan loan = loanController.addLoan(userId, itemId);
         return new ResponseWrapper<>(ResponseStatus.SUCCESS, loan);
     }
 
-    private ResponseWrapper<LoanDTO> handleUpdateLoan(LoanDTO updatedLoan) throws IOException {
-        LoanDTO loan = loanController.updateLoan(updatedLoan);
-        return new ResponseWrapper<>(ResponseStatus.SUCCESS, loan);
+    private ResponseWrapper<Loan> handleUpdateLoan(Loan loan) throws IOException {
+        Loan updatedLoan = loanController.updateLoan(loan);
+        return new ResponseWrapper<>(ResponseStatus.SUCCESS, updatedLoan);
     }
 
     private ResponseWrapper<String> handleDeleteLoan(String loanId) throws IOException {

@@ -1,6 +1,5 @@
 package edu.sdccd.cisc191.library.controller;
 
-import edu.sdccd.cisc191.library.dto.LoanDTO;
 import edu.sdccd.cisc191.library.exceptions.ItemAlreadyOnLoanException;
 import edu.sdccd.cisc191.library.exceptions.LoanLimitExceededException;
 import edu.sdccd.cisc191.library.model.Loan;
@@ -8,7 +7,7 @@ import edu.sdccd.cisc191.library.service.LoanService;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class LoanController {
     private final LoanService loanService;
@@ -17,44 +16,29 @@ public class LoanController {
         this.loanService = loanService;
     }
 
-    private LoanDTO convertToDTO(Loan loan) {
-        return new LoanDTO(loan.getBook(), loan.getUserId());
+    public Map<String, Loan> getAllLoans() {
+        return loanService.getAllLoans();
     }
 
-    private Loan convertToLoan(LoanDTO loanDTO) {
-        return new Loan(loanDTO.getBook(), loanDTO.getUserId());
+    public Loan getLoanById(String loanId) {
+        return loanService.getLoanById(loanId);
     }
 
-    public List<LoanDTO> getAllLoans() {
-        List<Loan> loans = loanService.getAllLoans();
-        return loans.stream().map(this::convertToDTO).collect(Collectors.toList());
+    public List<Loan> getLoansByUserId(String userId) {
+        return loanService.getLoansByUserId(userId);
     }
 
-    public LoanDTO getLoanById(String loanId) {
-        Loan loan = loanService.getLoanById(loanId);
-        return convertToDTO(loan);
+    public List<Loan> getOverdueLoansByUserId(String userId) {
+        return loanService.getOverdueLoansByUserId(userId);
     }
 
-    public List<LoanDTO> getLoansByUserId(String userId) {
-        List<Loan> loans = loanService.getLoansByUserId(userId);
-        return loans.stream().map(this::convertToDTO).collect(Collectors.toList());
-    }
-
-    public List<LoanDTO> getOverdueLoansByUserId(String userId) {
-        List<Loan> loans = loanService.getOverdueLoansByUserId(userId);
-        return loans.stream().map(this::convertToDTO).collect(Collectors.toList());
-    }
-
-    public LoanDTO addLoan(String userId, String itemId) throws LoanLimitExceededException, IOException,
+    public Loan addLoan(String userId, String itemId) throws LoanLimitExceededException, IOException,
             ItemAlreadyOnLoanException {
-        Loan newLoan = loanService.addLoan(userId, itemId);
-        return convertToDTO(newLoan);
+        return loanService.addLoan(userId, itemId);
     }
 
-    public LoanDTO updateLoan(LoanDTO updatedLoanDTO) throws IOException {
-        Loan updatedLoan = convertToLoan(updatedLoanDTO);
-        Loan savedLoan = loanService.updateLoan(updatedLoan);
-        return convertToDTO(savedLoan);
+    public Loan updateLoan(Loan loan) throws IOException {
+        return loanService.updateLoan(loan);
     }
 
     public void deleteLoan(String loanId) throws IOException {
