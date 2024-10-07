@@ -1,8 +1,9 @@
 package edu.sdccd.cisc191.library.message;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class ResponseWrapper<T> {
+public class ResponseWrapper<T> implements Serializable {
     private final ResponseStatus responseStatus;
     private String message;
     private T data;

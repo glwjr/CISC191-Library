@@ -1,9 +1,10 @@
 package edu.sdccd.cisc191.library.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class Loan {
+public class Loan implements Serializable {
     private static final int LOAN_PERIOD_DAYS = 14;
 
     private final String loanId;

@@ -25,16 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- * Program description will go here
- */
-
 public class Server {
     private ServerSocket serverSocket;
-    private Socket clientSocket;
-    private UserController userController;
-    private BookController bookController;
-    private LoanController loanController;
     private RequestHandler requestHandler;
 
     public void setUp() throws IOException {
@@ -42,7 +34,8 @@ public class Server {
         File usersFile = new File(dataDirectory.toFile(), "users.json");
         File booksFile = new File(dataDirectory.toFile(), "books.json");
         File loansFile = new File(dataDirectory.toFile(), "loans.json");
-        int maxLoansPerUser = 3;
+
+        int maxLoansPerUser = 2;
 
         Files.createDirectories(dataDirectory);
 
@@ -54,27 +47,37 @@ public class Server {
         BookService bookService = new BookService(bookRepository);
         LoanService loanService = new LoanService(maxLoansPerUser, loanRepository, userRepository, bookRepository);
 
-        userController = new UserController(userService);
-        bookController = new BookController(bookService);
-        loanController = new LoanController(loanService);
+        UserController userController = new UserController(userService);
+        BookController bookController = new BookController(bookService);
+        LoanController loanController = new LoanController(loanService);
+
         requestHandler = new RequestHandler(userController, bookController, loanController);
     }
 
     public void start() throws IOException {
-        int PORT = 3000;
+        int PORT = 8080;
         serverSocket = new ServerSocket(PORT);
         System.out.println("Server started on port " + PORT);
-    }
 
-    public void stop() throws IOException {
-        clientSocket.close();
-        serverSocket.close();
+        while (true) {
+            try (Socket clientSocket = serverSocket.accept()) {
+                ObjectInputStream in  = new ObjectInputStream(clientSocket.getInputStream());
+                ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+
+                RequestWrapper<?> request = (RequestWrapper<?>) in.readObject();
+                ResponseWrapper<?> response = requestHandler.handleRequest(request);
+                out.writeObject(response);
+            } catch (Exception e) {
+                System.out.println("Error handling request: " + e.getMessage());
+            }
+        }
     }
 
     public static void main(String[] args) {
         Server server = new Server();
         try {
             server.setUp();
+            server.start();
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
         }

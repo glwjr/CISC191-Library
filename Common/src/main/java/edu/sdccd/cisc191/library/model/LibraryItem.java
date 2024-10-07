@@ -1,8 +1,9 @@
 package edu.sdccd.cisc191.library.model;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public abstract class LibraryItem {
+public abstract class LibraryItem implements Serializable {
     private final String itemId;
     private String title;
     private boolean isOnLoan;
